@@ -914,4 +914,4 @@ jobs:
             DEST="${DOCKERHUB_IMAGE}:${TAG}"
             echo "  -> ${DEST}"
             docker buildx imagetools create -t "${DEST}" "${SOURCE}"
-          done <<< "${{ steps.tags.outputs.tags }}"\n
+          done <<< "${{ steps.tags.outputs.tags }}"
