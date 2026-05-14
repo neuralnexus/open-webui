@@ -58,4 +58,4 @@ jobs:
               repo: context.repo.repo,
               workflow_id: 'docker-build.yaml',
               ref: 'v${{ steps.get_version.outputs.version }}',
-            })
+            })\n
