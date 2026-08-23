@@ -14,7 +14,7 @@ env:
 
 jobs:
   build-main-image:
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ fromJSON(((github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars[matrix.runner_variable]) || format('["{0}"]', matrix.runner)) }}
     permissions:
       contents: read
       packages: write
@@ -23,9 +23,11 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: ubuntu-latest
+            runner: ubuntu-26.04
+            runner_variable: NEXUS_RUNS_ON_LINUX
           - platform: linux/arm64
             runner: ubuntu-24.04-arm
+            runner_variable: NEXUS_RUNS_ON_UBUNTU_24_04_ARM64
 
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -114,7 +116,7 @@ jobs:
           retention-days: 1
 
   build-cuda-image:
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ fromJSON(((github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars[matrix.runner_variable]) || format('["{0}"]', matrix.runner)) }}
     permissions:
       contents: read
       packages: write
@@ -123,9 +125,11 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: ubuntu-latest
+            runner: ubuntu-26.04
+            runner_variable: NEXUS_RUNS_ON_LINUX
           - platform: linux/arm64
             runner: ubuntu-24.04-arm
+            runner_variable: NEXUS_RUNS_ON_UBUNTU_24_04_ARM64
 
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -220,7 +224,7 @@ jobs:
           retention-days: 1
 
   build-cuda126-image:
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ fromJSON(((github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars[matrix.runner_variable]) || format('["{0}"]', matrix.runner)) }}
     permissions:
       contents: read
       packages: write
@@ -229,9 +233,11 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: ubuntu-latest
+            runner: ubuntu-26.04
+            runner_variable: NEXUS_RUNS_ON_LINUX
           - platform: linux/arm64
             runner: ubuntu-24.04-arm
+            runner_variable: NEXUS_RUNS_ON_UBUNTU_24_04_ARM64
 
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -327,7 +333,7 @@ jobs:
           retention-days: 1
 
   build-ollama-image:
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ fromJSON(((github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars[matrix.runner_variable]) || format('["{0}"]', matrix.runner)) }}
     permissions:
       contents: read
       packages: write
@@ -336,9 +342,11 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: ubuntu-latest
+            runner: ubuntu-26.04
+            runner_variable: NEXUS_RUNS_ON_LINUX
           - platform: linux/arm64
             runner: ubuntu-24.04-arm
+            runner_variable: NEXUS_RUNS_ON_UBUNTU_24_04_ARM64
 
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -430,7 +438,7 @@ jobs:
           retention-days: 1
 
   build-slim-image:
-    runs-on: ${{ matrix.runner }}
+    runs-on: ${{ fromJSON(((github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars[matrix.runner_variable]) || format('["{0}"]', matrix.runner)) }}
     permissions:
       contents: read
       packages: write
@@ -439,9 +447,11 @@ jobs:
       matrix:
         include:
           - platform: linux/amd64
-            runner: ubuntu-latest
+            runner: ubuntu-26.04
+            runner_variable: NEXUS_RUNS_ON_LINUX
           - platform: linux/arm64
             runner: ubuntu-24.04-arm
+            runner_variable: NEXUS_RUNS_ON_UBUNTU_24_04_ARM64
 
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -533,7 +543,7 @@ jobs:
           retention-days: 1
 
   merge-main-images:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(((github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars.NEXUS_RUNS_ON_LINUX) || '["ubuntu-26.04"]') }}
     needs: [build-main-image]
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -587,7 +597,7 @@ jobs:
           docker buildx imagetools inspect ${{ env.FULL_IMAGE_NAME }}:${{ steps.meta.outputs.version }}
 
   merge-cuda-images:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(((github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars.NEXUS_RUNS_ON_LINUX) || '["ubuntu-26.04"]') }}
     needs: [build-cuda-image]
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -643,7 +653,7 @@ jobs:
           docker buildx imagetools inspect ${{ env.FULL_IMAGE_NAME }}:${{ steps.meta.outputs.version }}
 
   merge-cuda126-images:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(((github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars.NEXUS_RUNS_ON_LINUX) || '["ubuntu-26.04"]') }}
     needs: [build-cuda126-image]
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -699,7 +709,7 @@ jobs:
           docker buildx imagetools inspect ${{ env.FULL_IMAGE_NAME }}:${{ steps.meta.outputs.version }}
 
   merge-ollama-images:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(((github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars.NEXUS_RUNS_ON_LINUX) || '["ubuntu-26.04"]') }}
     needs: [build-ollama-image]
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -755,7 +765,7 @@ jobs:
           docker buildx imagetools inspect ${{ env.FULL_IMAGE_NAME }}:${{ steps.meta.outputs.version }}
 
   merge-slim-images:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(((github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars.NEXUS_RUNS_ON_LINUX) || '["ubuntu-26.04"]') }}
     needs: [build-slim-image]
     steps:
       # GitHub Packages requires the entire repository name to be in lowercase
@@ -812,7 +822,7 @@ jobs:
 
   # Copy images from GHCR to Docker Hub (best-effort, won't block GHCR)
   copy-to-dockerhub:
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(((github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars.NEXUS_RUNS_ON_LINUX) || '["ubuntu-26.04"]') }}
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
     needs: [merge-main-images, merge-cuda-images, merge-cuda126-images, merge-ollama-images, merge-slim-images]
     continue-on-error: true
